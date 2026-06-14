@@ -11,10 +11,11 @@ runs-on: ubuntu-latest
 
 ```
 steps:
-  - uses: actions/checkout@v4
+  - name: Checkout
+    uses: actions/checkout@v4
 
   - name: SSH Deploy
-    uses: appleboy/ssh-action@v1
+    uses: appleboy/ssh-action@v1.2.2
 
     env:
       MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
