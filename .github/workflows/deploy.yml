@@ -1,46 +1,28 @@
 name: Deploy
 
 on:
-push:
-branches:
-- main
+ push:
+   branches:
+    - main
 
 jobs:
-deploy:
-runs-on: ubuntu-latest
+ deploy:
+   runs-on: ubuntu-latest
 
-```
-steps:
-  - name: Checkout
-    uses: actions/checkout@v4
+   steps:
 
-  - name: SSH Deploy
-    uses: appleboy/ssh-action@v1.2.2
+   - uses: actions/checkout@v4
 
-    env:
-      MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-      MYSQL_DB: ${{ secrets.MYSQL_DB }}
-      MYSQL_USER: ${{ secrets.MYSQL_USER }}
-      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+   - name: SSH Deploy
+     uses: appleboy/ssh-action@v1
 
-    with:
-      host: ${{ secrets.HOST }}
-      username: dhruba
-      key: ${{ secrets.SSH_KEY }}
+     with:
+       host: ${{ secrets.HOST }}
+       username: dhruba
+       key: ${{ secrets.SSH_KEY }}
+    
 
-      envs: MYSQL_ROOT_PASSWORD,MYSQL_DB,MYSQL_USER,MYSQL_PASSWORD
-
-      script: |
-        cd /home/dhruba/project/two-tier-flask-aplication
-
-        cat > .env << EOF
-        MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
-        MYSQL_DB=$MYSQL_DB
-        MYSQL_USER=$MYSQL_USER
-        MYSQL_PASSWORD=$MYSQL_PASSWORD
-        EOF
-
-        git pull
-        docker compose down
-        docker compose up -d --build
-```
+       script: |
+         cd /home/dhruba/project/two-tier-flask-aplication
+         git pull
+         docker compose up -d --build
