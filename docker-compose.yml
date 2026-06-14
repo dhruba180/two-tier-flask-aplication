@@ -1,0 +1,46 @@
+services:
+  mysql:
+    image: mysql:latest
+
+    environment:
+      MYSQL_ROOT_PASSWORD:  ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DB}
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u${MYSQL_USER}", "-p${MYSQL_PASSWORD}"]
+      interval: 7s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+    networks:
+      - two-tier
+
+  flask:
+    build: .
+
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD:  ${MYSQL_PASSWORD}
+      MYSQL_DB: ${MYSQL_DB}
+
+    ports:
+      - "80:5000"
+
+    depends_on:
+      - mysql
+
+    networks:
+      - two-tier
+
+    restart: always
+
+networks:
+  two-tier:
+volumes:
+  mysql_data:
+
